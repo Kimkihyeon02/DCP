@@ -10,7 +10,15 @@ export function Header() {
   const { address, connect, disconnect } = useWalletUser()
   const [query, setQuery] = useState('')
 
-  const adminWallet = process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES
+  // 🔥 관리자 지갑 여러 개 지원
+  const adminWallets: string[] = [
+    process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS_1 ?? '',
+    process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS_2 ?? '',
+  ].filter(Boolean)
+
+  const isAdmin =
+    !!address &&
+    adminWallets.some((w) => w.toLowerCase() === address.toLowerCase())
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,7 +41,7 @@ export function Header() {
           </Link>
         </div>
 
-        {/* 가운데: 메뉴 (글자만 살짝 키움) */}
+        {/* 가운데: 메뉴 */}
         <div className="flex-1 flex justify-center">
           <div className="flex items-center gap-6 text-[15px] text-gray-800">
             <Link href="/marketplace/list" className="hover:text-pink-600">
@@ -52,12 +60,11 @@ export function Header() {
               프로필
             </Link>
 
-            {adminWallet &&
-              address?.toLowerCase() === adminWallet.toLowerCase() && (
-                <Link href="/admin" className="text-red-600 font-semibold">
-                  관리자
-                </Link>
-              )}
+            {isAdmin && (
+              <Link href="/admin" className="text-red-600 font-semibold">
+                관리자
+              </Link>
+            )}
           </div>
         </div>
 
