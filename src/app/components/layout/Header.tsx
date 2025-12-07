@@ -12,8 +12,8 @@ export function Header() {
 
   // 🔥 관리자 지갑 여러 개 지원
   const adminWallets: string[] = [
-    process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS_1 ?? '',
-    process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS_2 ?? '',
+    process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES_1 ?? '',
+    process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES_2 ?? '',
   ].filter(Boolean)
 
   const isAdmin =
