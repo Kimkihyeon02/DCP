@@ -9,25 +9,51 @@ export function useAdmin() {
   useEffect(() => {
     if (!address) {
       console.log('⚠️ 아직 지갑 주소가 연결되지 않음')
+      setIsAdmin(false)
       return
     }
 
-    const envAddr =
-      process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES ||
-      process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS
+    // 🔥 가능한 모든 관리자 env 값을 모아서 배열로 만든다.
+    const rawList: string[] = []
 
-    console.log('📁 ENV 관리자 주소:', envAddr)
+    // 1) 콤마로 한 번에 넣은 경우
+    if (process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES) {
+      rawList.push(process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES)
+    }
 
-    if (!envAddr) {
-      console.warn('🚫 NEXT_PUBLIC_ADMIN_WALLET_ADDRESS 환경변수가 없습니다!')
+    // 2) 번호 붙여서 나눠 넣은 경우
+    if (process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES_1) {
+      rawList.push(process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES_1)
+    }
+    if (process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES_2) {
+      rawList.push(process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESSES_2)
+    }
+
+    // 3) 예전 단일 변수 이름도 혹시 모를 대비
+    if (process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS) {
+      rawList.push(process.env.NEXT_PUBLIC_ADMIN_WALLET_ADDRESS)
+    }
+
+    console.log('📁 ENV 관리자 원본들:', rawList)
+
+    if (rawList.length === 0) {
+      console.warn('🚫 관리자 지갑 환경변수가 하나도 없습니다!')
+      setIsAdmin(false)
       return
     }
 
-    const admin = envAddr.trim().toLowerCase()
+    // "0x...,0x..." 같이 들어온 것도 전부 쪼개서 하나의 배열로
+    const adminList = rawList
+      .flatMap((v) => v.split(',')) // 콤마 기준 분리
+      .map((v) => v.trim().toLowerCase()) // 공백 제거 + 소문자 통일
+      .filter(Boolean) // 빈 문자열 제거
+
     const current = address.trim().toLowerCase()
-    console.log('🔍 비교:', { admin, current })
 
-    const match = current === admin
+    console.log('👑 관리자 목록:', adminList)
+    console.log('🧍 현재 주소:', current)
+
+    const match = adminList.includes(current)
     setIsAdmin(match)
     console.log(match ? '✅ 관리자 권한 확인 완료' : '❌ 관리자 아님')
   }, [address])
