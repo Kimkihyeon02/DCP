@@ -10,9 +10,8 @@ export function useAdmin() {
     console.log('====== 🛡 useAdmin 실행됨 ======')
 
     if (!address) {
-      console.log('⚠️ 아직 지갑 주소가 연결되지 않음')
-      setIsAdmin(false)
-      return
+      console.log('아직 주소 없음')
+      return // ❌ setIsAdmin(false) 하면 안 됨
     }
 
     console.log('🧍 현재 사용자 주소:', address)
